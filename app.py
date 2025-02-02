@@ -11,7 +11,10 @@ from scipy import stats
 from datetime import timedelta
 from sklearn.preprocessing import OrdinalEncoder
 from stable_baselines3 import TD3
+import os
 
+currentdir = os.path.dirname(os.path.abspath(__file__))
+dataset_path = os.path.join(currentdir,"Dataset")
 # ------------------------------------------------------------------------------------------------------
 #                                   Load Models
 # ------------------------------------------------------------------------------------------------------
@@ -44,13 +47,13 @@ st.markdown(custom_css, unsafe_allow_html=True)
 @st.cache_data   # To cache data and avoid re-computation
 
 def load_data():
-    product = pd.read_excel('Dataset\Dataset.xlsx' , sheet_name="dh Products Lookup")
-    store = pd.read_excel('Dataset\Dataset.xlsx' , sheet_name="dh Store Lookup")
-    upc_encoding = pd.read_excel('Dataset\StoreID UPC Encoding.xlsx', sheet_name='Product')
-    store_encoding = pd.read_excel('Dataset\StoreID UPC Encoding.xlsx', sheet_name='Store')
-    data = pd.read_excel('Dataset\FINAL SUBSET_preprocessed_dataOG.xlsx')   
-    elasticity = pd.read_excel('Dataset\Price Elasticity.xlsx')
-    subset = pd.read_excel('Dataset\Subset Data Random Price Optimization.xlsx')
+    product = pd.read_excel(os.path.join(dataset_path,"Dataset.xlsx") , sheet_name="dh Products Lookup")
+    store = pd.read_excel(os.path.join(dataset_path,"Dataset.xlsx") , sheet_name="dh Store Lookup")
+    upc_encoding = pd.read_excel(os.path.join(dataset_path,"StoreID UPC Encoding.xlsx"), sheet_name='Product')
+    store_encoding = pd.read_excel(os.path.join(dataset_path,"StoreID UPC Encoding.xlsx"), sheet_name='Store')
+    data = pd.read_excel(os.path.join(dataset_path,"FINAL SUBSET_preprocessed_dataOG.xlsx"))   
+    elasticity = pd.read_excel(os.path.join(dataset_path,"Price Elasticity.xlsx"))
+    subset = pd.read_excel(os.path.join(dataset_path,"Subset Data Random Price Optimization.xlsx"))
     return product, store, upc_encoding, store_encoding, data, elasticity, subset
 
 product, store, upc_encoding, store_encoding, data, elasticity, subset = load_data()
