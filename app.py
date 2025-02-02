@@ -46,11 +46,11 @@ st.markdown(custom_css, unsafe_allow_html=True)
 def load_data():
     product = pd.read_excel('Dataset\Dataset.xlsx' , sheet_name="dh Products Lookup")
     store = pd.read_excel('Dataset\Dataset.xlsx' , sheet_name="dh Store Lookup")
-    upc_encoding = pd.read_excel('Dataset/StoreID UPC Encoding.xlsx', sheet_name='Product')
-    store_encoding = pd.read_excel('Dataset/StoreID UPC Encoding.xlsx', sheet_name='Store')
-    data = pd.read_excel('Dataset/FINAL SUBSET_preprocessed_data.xlsx')   
-    elasticity = pd.read_excel('Dataset/Price Elasticity.xlsx')
-    subset = pd.read_excel('Dataset/Subset Data Random Price Optimization.xlsx')
+    upc_encoding = pd.read_excel('Dataset\StoreID UPC Encoding.xlsx', sheet_name='Product')
+    store_encoding = pd.read_excel('Dataset\StoreID UPC Encoding.xlsx', sheet_name='Store')
+    data = pd.read_excel('Dataset\FINAL SUBSET_preprocessed_dataOG.xlsx')   
+    elasticity = pd.read_excel('Dataset\Price Elasticity.xlsx')
+    subset = pd.read_excel('Dataset\Subset Data Random Price Optimization.xlsx')
     return product, store, upc_encoding, store_encoding, data, elasticity, subset
 
 product, store, upc_encoding, store_encoding, data, elasticity, subset = load_data()
