@@ -1,9 +1,1 @@
-pandas
-numpy
 streamlit
-plotly
-altair
-pickle
-scipy
-scikit-learn
-stable-baselines3
