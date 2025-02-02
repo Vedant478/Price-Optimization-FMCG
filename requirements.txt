@@ -6,3 +6,5 @@ altair
 scipy
 scikit-learn
 stable-baselines3
+xgboost
+openpyxl
