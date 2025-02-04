@@ -11,10 +11,11 @@ from scipy import stats
 from datetime import timedelta
 from sklearn.preprocessing import OrdinalEncoder
 from stable_baselines3 import TD3
+
 import os
 
-currentdir = os.path.dirname(os.path.abspath(__file__))
-dataset_path = os.path.join(currentdir,"Dataset")
+# currentdir = os.path.dirname(os.path.abspath(__file__))
+# dataset_path = os.path.join(currentdir,"Dataset")
 # ------------------------------------------------------------------------------------------------------
 #                                   Load Models
 # ------------------------------------------------------------------------------------------------------
@@ -47,13 +48,13 @@ st.markdown(custom_css, unsafe_allow_html=True)
 @st.cache_data   # To cache data and avoid re-computation
 
 def load_data():
-    product = pd.read_excel(os.path.join(dataset_path,"Dataset.xlsx") , sheet_name="dh Products Lookup")
-    store = pd.read_excel(os.path.join(dataset_path,"Dataset.xlsx") , sheet_name="dh Store Lookup")
-    upc_encoding = pd.read_excel(os.path.join(dataset_path,"StoreID UPC Encoding.xlsx"), sheet_name='Product')
-    store_encoding = pd.read_excel(os.path.join(dataset_path,"StoreID UPC Encoding.xlsx"), sheet_name='Store')
-    data = pd.read_excel(os.path.join(dataset_path,"FINAL SUBSET_preprocessed_dataOG.xlsx"))   
-    elasticity = pd.read_excel(os.path.join(dataset_path,"Price Elasticity.xlsx"))
-    subset = pd.read_excel(os.path.join(dataset_path,"Subset Data Random Price Optimization.xlsx"))
+    product = pd.read_excel("Dataset/Dataset.xlsx" , sheet_name="dh Products Lookup")
+    store = pd.read_excel("Dataset/Dataset.xlsx" , sheet_name="dh Store Lookup")
+    upc_encoding = pd.read_excel("Dataset/StoreID UPC Encoding.xlsx", sheet_name='Product')
+    store_encoding = pd.read_excel("Dataset/StoreID UPC Encoding.xlsx", sheet_name='Store')
+    data = pd.read_excel("Dataset/FINAL SUBSET_preprocessed_dataOG.xlsx")   
+    elasticity = pd.read_excel("Dataset/Price Elasticity.xlsx")
+    subset = pd.read_excel("Dataset/Subset Data Random Price Optimization.xlsx")
     return product, store, upc_encoding, store_encoding, data, elasticity, subset
 
 product, store, upc_encoding, store_encoding, data, elasticity, subset = load_data()
@@ -176,13 +177,23 @@ def optimize_price(store_id, upc, feature, display, elasticity_value, forecasted
 # ------------------------------------------------------------------------------------------------------
 
 # To extract unique STORE_ID
-def get_store_id(store_seg_options):
+# def get_store_id(store_seg_options):
+#     if store_seg_options:
+#         store_data = store[(store['SEG_VALUE_NAME'].isin(store_seg_options))]
+#         store_ids = sorted(store_data['STORE_ID'].unique())
+#     else:
+#         store_ids = sorted(elasticity['STORE_ID'].unique())
+#     return store_ids
+
+def get_store_names(store_seg_options):
     if store_seg_options:
         store_data = store[(store['SEG_VALUE_NAME'].isin(store_seg_options))]
-        store_ids = sorted(store_data['STORE_ID'].unique())
     else:
-        store_ids = sorted(elasticity['STORE_ID'].unique())
-    return store_ids
+        store_data = store  # Select all stores if no segment is chosen
+
+    store_names_dict = dict(zip(store_data['STORE_NAME'], store_data['STORE_ID']))
+    return store_names_dict
+
 
 # To extract UPCs based on the selected store
 def get_upcs(store_id, sub_category_options):
@@ -330,7 +341,7 @@ def calculate_regression(subset):
     return slope, intercept, r_value, p_value, std_err, line
  
 # To visualize scatter plot of Price and Unit sales
-def plot_price_unit_sales(store_id, upc):
+# def plot_price_unit_sales(store_id, upc):
     subset = get_store_upc_data(store_id, upc)
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -423,6 +434,12 @@ st.markdown("""
     - Recommend the optimal price to maximize revenue. The optimal price will be within **±20%** of your inputted price
 """)
 
+st.title('What does the store segment means ?')
+st.markdown("""
+    - Value -  Customers focused most on price
+    - Mainstream - Serve the vast majority between those two extremes
+    - Upscale - Place their primary emphasis on customer service and finding the extra products they want
+            """)
 st.header("How To Use")
 st.markdown("""
     **Please provide the following inputs in the sidebar to see store, product, and price elasticity details:**
@@ -442,16 +459,29 @@ st.divider()
 st.sidebar.header("Input Your Data")
 store_seg_options = st.sidebar.multiselect("**Store Segment**", ['VALUE', 'MAINSTREAM', 'UPSCALE'], placeholder="Select Store Segment")
 st.sidebar.markdown("<br>", unsafe_allow_html=True)
-store_id = st.sidebar.selectbox("**Store ID**", get_store_id(store_seg_options), index=None, placeholder = "Select Store ID")
-st.sidebar.markdown("<br>", unsafe_allow_html=True)
+
+# Fetch store names mapping
+store_names_dict = get_store_names(store_seg_options)  # Get Store Name → Store ID mapping
+selected_store_name = st.sidebar.selectbox("**Store Name**", list(store_names_dict.keys()), index=None, placeholder="Select Store")
+
+# Ensure store_id is only defined when a store is selected
+store_id = None
+if selected_store_name:
+    store_id = store_names_dict.get(selected_store_name)  # Convert store name to store ID
 
 forecast = False
 if store_id:
     sub_category_options = st.sidebar.multiselect("**Product Category**", sorted(product['SUB_CATEGORY'].unique()), placeholder="Select Product Category")
     st.sidebar.markdown("<br>", unsafe_allow_html=True)
-
+    
     upc = st.sidebar.selectbox("**Universal Product Code (UPC)**", get_upcs(store_id, sub_category_options), index=None, placeholder="Select UPC")
     st.sidebar.markdown("<br>", unsafe_allow_html=True)
+
+    # Fetch product names instead of UPCs
+    # product_names = get_upcs(store_id, sub_category_options)
+    # selected_product_name = st.sidebar.selectbox("**Product Name**", product_names, index=None, placeholder="Select Product")
+
+    # st.sidebar.markdown("<br>", unsafe_allow_html=True)
 
     if store_id and upc:  
         # Adjust price slider based on historical price range
@@ -476,8 +506,10 @@ if store_id:
             display = 1
         elif display_str == "No":
             display = 0
+
         if feature in [0, 1] and display in [0, 1]:
             forecast = True
+
 
 # ------------------------------------------------------------------------------------------------------
 #                                   Display Historical Data
@@ -490,7 +522,8 @@ if store_id and upc:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("🏪 Store Details")
-        st.dataframe(store_details_df) 
+        store_details_df = get_store_details(store_id)
+        st.dataframe(store_details_df)
     with col2:
         st.subheader("🛍️ Product Details")
         st.dataframe(product_details_df) 
@@ -515,9 +548,9 @@ if store_id and upc:
     # Graph 2:Time series plot of PRICE and revenue 
     plot_unit_sales_revenue(store_id, upc, 'PRICE')
     # Graph 3:Scatter plot price(x) vs unit sales(y)
-    plot_price_unit_sales(store_id, upc)
+    # plot_price_unit_sales(store_id, upc)
     # Graph 4:Price distribution histogram
-    plot_price_distribution(store_id, upc)
+    # plot_price_distribution(store_id, upc)
     st.divider()
 
 # ------------------------------------------------------------------------------------------------------
@@ -575,23 +608,6 @@ if forecast:
     revenue_changes_pct = (opt_revenue - revenue)/revenue * 100
     st.markdown(f"**Price:** {visualize_change_pct(price_changes_pct)}", unsafe_allow_html=True)
     st.markdown(f"**Revenue:** {visualize_change_pct(revenue_changes_pct)}", unsafe_allow_html=True)
-
-# ------------------------------------------------------------------------------------------------------
-#                                   Feature Importance for Demand Forecasting
-# ------------------------------------------------------------------------------------------------------
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.divider()
-    st.subheader("**Feature Importance**")
-    st.caption("""
-        Table below shows the key factors (features) used in the demand forecasting model and their relative importance. 
-        The higher the importance score, the more influence the factor has on the forecast.
-    """)
-    processed_input_transposed = processed_input.transpose()
-    processed_input_transposed.columns = ['Value']
-    final_df = show_feature_importance(processed_input).set_index('Feature').join(processed_input_transposed)
-    st.dataframe(final_df[[ 'Value', 'Importance Score']], use_container_width=True)
-
-
 # ------------------------------------------------------------------------------------------------------
 #                                   Additional Info about Project
 # ------------------------------------------------------------------------------------------------------
