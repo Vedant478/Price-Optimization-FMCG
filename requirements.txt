@@ -2,7 +2,6 @@ pandas
 numpy
 streamlit
 plotly
-altair
 scipy
 scikit-learn
 stable-baselines3

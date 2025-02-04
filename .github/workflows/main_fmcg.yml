@@ -2,7 +2,7 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Python app to Azure Web App - Price-optimization
+name: Build and deploy Python app to Azure Web App - fmcg
 
 on:
   push:
@@ -68,14 +68,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_223B7175B0894F59826758CA75BABA71 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6C0BB4D10DCD4297A56418A56803F518 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3F9DAEF1A81D4426AEF8B11D75B0567B }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C71E99D5229D470B97AA377190BA2731 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8E1C5F84C01D4B0BA3547A112A9808A4 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4330CEF4D51A4E01B0D75EBC5EAB7505 }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'Price-optimization'
+          app-name: 'fmcg'
           slot-name: 'Production'
           
