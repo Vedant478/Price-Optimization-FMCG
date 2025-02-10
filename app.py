@@ -24,7 +24,7 @@ with open('best_xgb_2.pkl', 'rb') as file:
     xgb = pickle.load(file)
 
 # Load Price Optimization model
-td3_5 = TD3.load("TD3_5")
+td3_5 = TD3.load("TD3_5.zip")
 
 # Layout Settings
 #st. set_page_config(layout="centered")
