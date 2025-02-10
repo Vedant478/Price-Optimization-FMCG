@@ -424,7 +424,7 @@ def visualize_change_pct(change_percent):
 # ------------------------------------------------------------------------------------------------------
 
 #-----------------------------------  Main Page --------------------------------------------------------
-st.title('Pricing Desision Support System for Fast-Moving Consumer Goods (FMCG) 💲')
+st.title('Pricing Decision Support System for Fast-Moving Consumer Goods (FMCG) 💲')
 st.markdown("<br>", unsafe_allow_html=True)
 st.header("About the App")
 st.markdown("""
