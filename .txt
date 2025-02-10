@@ -1,0 +1,11 @@
+container_name = fmcggg
+storage_account_name = fmcg11
+https://fmcg11.blob.core.windows.net/?sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-02-13T17:36:22Z&st=2025-02-06T09:36:22Z&spr=https&sig=uBBtAL3GdnQfiD%2FMFaUewOiPilnTaBZqy2ij6CYFsic%3D
+
+
+configs = {"fs.azure.account.auth.type": "OAuth",
+           "fs.azure.account.oauth.provider.type": "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider",
+           "fs.azure.account.oauth2.client.id": "ad29b77a-e00d-4078-919a-bff284a4190b",
+           "fs.azure.account.oauth2.client.secret": "gUx8Q~1ZXWvk9J_wcxcPMJwUL230WX~xzxB4Vdvg",
+           "fs.azure.account.oauth2.client.endpoint": "https://login.microsoftonline.com/6624ffb7-743a-409b-8176-e451d1dd505b/oauth2/token"}
+
