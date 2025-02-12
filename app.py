@@ -541,7 +541,7 @@ if store_id and upc:
     show_elasticity_info(elasticity_value)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Visualize historical data
+    #Visualize historical data
     st.subheader("📊 Visualizing Historical Trends: Price, Unit Sales, and Revenue")
     # Graph 1: Time series plot of unit sales and revenue 
     plot_unit_sales_revenue(store_id, upc, 'UNIT_SALES')
